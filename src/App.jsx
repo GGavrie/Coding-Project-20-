@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Gallery from './components/Gallery'
 import LoadingSpinner from './components/LoadingSpinner'
 import ErrorMessage from './components/ErrorMessage'
+import DestinationSelector from './components/DestinationSelector'
 import './styles/style.css'
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDestination, setSelectedDestination] = useState('All Destinations');
 
   // Fetch tours data when component mounts
   useEffect(() => {
@@ -41,6 +43,11 @@ function App() {
     setTours(newTours);
   };
 
+  // Filter tours based on selected destination
+  const filteredTours = selectedDestination === 'All Destinations' 
+    ? tours 
+    : tours.filter(tour => tour.name === selectedDestination);
+
   // Show loading spinner while data is being fetched
   if (loading) {
     return <LoadingSpinner />;
@@ -63,11 +70,16 @@ function App() {
     );
   }
 
-  // Render main tour gallery
+  // Render main tour gallery with destination selector
   return (
     <div className="container">
       <h1>Tour Gallery</h1>
-      <Gallery tours={tours} onRemove={removeTour} />
+      <DestinationSelector 
+        tours={tours}
+        selected={selectedDestination}
+        onSelect={setSelectedDestination}
+      />
+      <Gallery tours={filteredTours} onRemove={removeTour} />
     </div>
   )
 }
